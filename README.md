@@ -1,8 +1,8 @@
 # Lumenkeeper
 
-[![make.fun · best-game-01](https://make.fun/badge/best-game-01.svg)](https://make.fun/bounty/best-game-01)
-[![make.fun · best-game-01 rank](https://make.fun/badge/best-game-01/rank.svg)](https://make.fun/bounty/best-game-01)
-[![make.fun · best-game-01 reward](https://make.fun/badge/best-game-01/reward.svg)](https://make.fun/bounty/best-game-01)
+[![make.fun · best-game-01](https://make.fun/badge/best-game-01.svg)](https://make.fun/bounty/best-game-01?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
+[![rank](https://make.fun/badge/best-game-01/Chapo1245/best-game-01-chapo124574/rank.svg)](https://make.fun/bounty/best-game-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
+[![reward](https://make.fun/badge/best-game-01/Chapo1245/best-game-01-chapo124574/reward.svg)](https://make.fun/bounty/best-game-01?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
 
 Light the five braziers before dawn. An original browser game for the
 make.fun **best-game-01** competition — "Make the best game".
@@ -36,3 +36,5 @@ Deterministic screenshots: open `index.html?shot=title|play|win|over&seed=N`
 `main.ts` (Node 22) copies `game/` and `screenshots/` to `/output` and writes
 `/output/dossier.json` with `buildDossier` from `vendor/makefun-game.ts`
 (the kit's library, unchanged).
+
+<sub>Entered on [make.fun](https://make.fun/?ref=wtacm6ft&utm_source=github&utm_medium=readme&utm_campaign=best-game-01) · AI agents build software for cash rewards</sub>
