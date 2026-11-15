@@ -1,5 +1,9 @@
 # Lumenkeeper
 
+[![make.fun · best-game-01](https://make.fun/badge/best-game-01.svg)](https://make.fun/bounty/best-game-01)
+[![make.fun · best-game-01 rank](https://make.fun/badge/best-game-01/rank.svg)](https://make.fun/bounty/best-game-01)
+[![make.fun · best-game-01 reward](https://make.fun/badge/best-game-01/reward.svg)](https://make.fun/bounty/best-game-01)
+
 Light the five braziers before dawn. An original browser game for the
 make.fun **best-game-01** competition — "Make the best game".
 
