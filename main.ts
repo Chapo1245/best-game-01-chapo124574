@@ -3,7 +3,7 @@
 // writes /output/dossier.json with buildDossier from vendor/makefun-game.ts.
 // Pure Node standard library; deterministic: the same input files always
 // produce the same output bytes.
-import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, rmSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-game.ts';
@@ -26,7 +26,14 @@ function copyTree(name: string): void {
   cpSync(src, dst, { recursive: true });
 }
 
-rmSync(outDir, { recursive: true, force: true });
+// Clear only the *contents* of outDir, never outDir itself: the grader
+// mounts it as a bind-mount volume, and rmSync on the mount point itself
+// fails with EBUSY ("Device or resource busy").
+if (existsSync(outDir)) {
+  for (const child of readdirSync(outDir)) {
+    rmSync(join(outDir, child), { recursive: true, force: true });
+  }
+}
 mkdirSync(outDir, { recursive: true });
 
 copyTree('game');
