@@ -1,145 +1,78 @@
-// EMBERWARD — config: every number that tunes the game lives here.
-// One clear job: constants, tower/enemy definitions, wave table.
-export const VIEW_W = 1280;
-export const VIEW_H = 720;
-export const TILE = 80;
-export const COLS = 16;
-export const ROWS = 9;
+// EMBERDECK tuning: the deck, the lanes, the nights.
+// Your deck is your town's wall: play cards to raise towers, then the
+// Gloom walks the lanes. Draft one new card after every night.
+export const STEP = 1 / 60;
+export const CANVAS = { width: 1280, height: 720 };
+export const LANES = 3;
+export const COLS = 8;
+export const CELL_W = 105;
+export const CELL_H = 112;
+export const BOARD_X = 150;
+export const BOARD_Y = 116;
+export const GATE_X = BOARD_X + COLS * CELL_W; // 990
+export const HUD_H = 64;
+export const HAND_Y = 486;
+export const NIGHTS = 10;
+export const HEART_MAX = 100;
+export const START_GOLD = 90;
+export const HAND_SIZE = 5;
 
-export const START_GOLD = 220;
-export const START_LIVES = 20;
-export const TOTAL_WAVES = 40;
-export const WAVE_CLEAR_BONUS = 25;
-export const INTEREST_RATE = 0.05;
-export const INTEREST_CAP = 30;
-export const SELL_RATE = 0.7;
-
-// The serpentine path enemies walk, in tile coords (x, y).
-// Enters left at row 1, snakes down, exits right at row 7.
-export const PATH_TILES = [
-  [0, 1], [1, 1], [2, 1], [3, 1], [4, 1], [5, 1], [6, 1], [7, 1], [8, 1],
-  [8, 2], [8, 3],
-  [7, 3], [6, 3], [5, 3], [4, 3], [3, 3], [2, 3],
-  [2, 4], [2, 5],
-  [3, 5], [4, 5], [5, 5], [6, 5], [7, 5], [8, 5], [9, 5], [10, 5], [11, 5], [12, 5], [13, 5],
-  [13, 6], [13, 7],
-  [14, 7], [15, 7],
-];
-
-// Build pads: free tiles next to the path where towers may stand.
-export const PAD_TILES = [
-  [1, 0], [3, 0], [5, 0], [7, 0], [9, 2], [10, 1], [11, 1], [12, 1],
-  [4, 2], [6, 2], [1, 2], [3, 4], [5, 4], [7, 4], [9, 4], [11, 4],
-  [1, 4], [4, 6], [6, 6], [8, 6], [10, 6], [12, 6], [14, 6], [10, 7],
-  [11, 7], [12, 7], [14, 5], [9, 7], [7, 7], [5, 7], [3, 6], [1, 6],
-  [0, 0], [15, 0], [15, 2], [0, 4], [15, 4], [0, 8], [15, 8], [8, 8],
-];
-
-// Towers: id, name, hotkey, cost, range(px), damage, rate(shots/s), color,
-// light radius, and a short line the shop card shows.
-export const TOWERS = {
-  spitter: {
-    id: 'spitter', name: 'Ember Spitter', key: '1', cost: 50,
-    range: 150, damage: 9, rate: 2.4, color: '#ff9a3c', light: 110,
-    blurb: 'Fast ember bolts. Cheap and reliable.',
-  },
-  frost: {
-    id: 'frost', name: 'Frost Lantern', key: '2', cost: 80,
-    range: 140, damage: 4, rate: 1.0, color: '#7fd4ff', light: 130,
-    blurb: 'Chills every wisp it touches. Slows 45%.',
-  },
-  cannon: {
-    id: 'cannon', name: 'Sun Cannon', key: '3', cost: 140,
-    range: 170, damage: 26, rate: 0.7, color: '#ffd94d', light: 120,
-    splash: 70, blurb: 'Lobbed sunfire. Splashes a wide ring.',
-  },
-  gale: {
-    id: 'gale', name: 'Gale Fan', key: '4', cost: 110,
-    range: 160, damage: 6, rate: 1.2, color: '#b8f5c8', light: 115,
-    knock: 46, blurb: 'Wind bursts shove wisps back down the path.',
-  },
-  prism: {
-    id: 'prism', name: 'Prism Lance', key: '5', cost: 200,
-    range: 260, damage: 34, rate: 0.8, color: '#e6a8ff', light: 140,
-    pierce: true, blurb: 'A piercing beam through the whole line.',
-  },
-  warden: {
-    id: 'warden', name: 'Warden Totem', key: '6', cost: 160,
-    range: 0, damage: 0, rate: 0, color: '#ffe9a8', light: 210,
-    buff: 0.3, blurb: 'No attack. +30% damage to nearby towers.',
-  },
-  brazier: {
-    id: 'brazier', name: 'Brazier', key: '7', cost: 40,
-    range: 0, damage: 0, rate: 0, color: '#ffb347', light: 240,
-    blurb: 'Pure light. Wisps in its glow burn +25%.',
-  },
+// Cards. kind: 'tower' | 'wall' | 'brazier' | 'spell'. cost in gold.
+// Towers share the DAWNBURG-style stat table (dmg, rate, range in cells).
+export const CARDS = {
+  arrow: { name: 'Arrow', kind: 'tower', cost: 50, blurb: 'Tower: fast arrows', tier: [ { dmg: 7, rate: 2.4, range: 2.8 }, { dmg: 11, rate: 2.8, range: 3.0 }, { dmg: 17, rate: 3.4, range: 3.4 } ] },
+  frost: { name: 'Frost', kind: 'tower', cost: 70, blurb: 'Tower: chills foes', tier: [ { dmg: 4, rate: 1.2, range: 2.4, slow: 0.55, slowSecs: 1.6 }, { dmg: 7, rate: 1.4, range: 2.6, slow: 0.45, slowSecs: 2.0 }, { dmg: 11, rate: 1.6, range: 2.8, slow: 0.35, slowSecs: 2.4 } ] },
+  cannon: { name: 'Cannon', kind: 'tower', cost: 90, blurb: 'Tower: splash shells', tier: [ { dmg: 22, rate: 0.55, range: 2.6, splash: 0.9 }, { dmg: 34, rate: 0.6, range: 2.8, splash: 1.0 }, { dmg: 52, rate: 0.7, range: 3.0, splash: 1.2 } ] },
+  prism: { name: 'Prism', kind: 'tower', cost: 120, blurb: 'Tower: sunbeam chains', tier: [ { dmg: 10, rate: 1.0, range: 3.0, chain: 3 }, { dmg: 16, rate: 1.1, range: 3.2, chain: 4 }, { dmg: 26, rate: 1.3, range: 3.6, chain: 5 } ] },
+  wall: { name: 'Wall', kind: 'wall', cost: 15, blurb: 'Blocks a lane cell', hp: 150 },
+  brazier: { name: 'Brazier', kind: 'brazier', cost: 25, blurb: 'Light: slow +25% dmg' },
+  ember: { name: 'Ember Burst', kind: 'spell', cost: 30, blurb: '40 damage to all foes', dmg: 40 },
+  freeze: { name: 'Deep Freeze', kind: 'spell', cost: 20, blurb: 'Slow all foes 4s', slow: 0.5, secs: 4 },
+  repair: { name: 'Mend the Flame', kind: 'spell', cost: 30, blurb: 'Heart +20 HP', heal: 20 },
+  coin: { name: 'Gold Rush', kind: 'spell', cost: 0, blurb: '+30 gold, right now', gold: 30 },
+  overcharge: { name: 'Overcharge', kind: 'spell', cost: 40, blurb: 'Towers +100% tonight', mult: 2, secs: 999 },
+  reinforce: { name: 'Reinforce', kind: 'spell', cost: 60, blurb: 'Upgrade a tower +1 tier' },
 };
-export const TOWER_ORDER = ['spitter', 'frost', 'cannon', 'gale', 'prism', 'warden', 'brazier'];
+export const DRAFT_POOL = ['arrow', 'frost', 'cannon', 'prism', 'wall', 'brazier', 'ember', 'freeze', 'repair', 'coin', 'overcharge', 'reinforce'];
+export const START_DECK = ['arrow', 'arrow', 'wall', 'wall', 'brazier', 'frost', 'coin', 'coin', 'ember', 'repair'];
+export const TOWER_KINDS = ['arrow', 'frost', 'cannon', 'prism'];
+export const BRAZIER_RADIUS = 2.2;
+export const BRAZIER_SLOW = 0.65;
+export const BRAZIER_BONUS = 1.25;
+export const SELL_BACK = 0.7;
 
-// Upgrade tiers: multiplier on damage/rate and extra light, per tier.
-export const UPGRADE_TIERS = [
-  null,
-  { costMul: 0.8, dmgMul: 1.6, rateMul: 1.15, lightAdd: 25 },
-  { costMul: 1.1, dmgMul: 2.6, rateMul: 1.3, lightAdd: 50 },
-  { costMul: 1.5, dmgMul: 4.2, rateMul: 1.5, lightAdd: 80 },
-];
-
-// Enemies: hp, speed (px/s), gold bounty, size, color, and traits.
 export const ENEMIES = {
-  wisp:    { hp: 30,  speed: 52, gold: 4,  size: 13, color: '#8f7bff', name: 'Wisp' },
-  crawler: { hp: 70,  speed: 38, gold: 6,  size: 16, color: '#5ec98a', name: 'Crawler' },
-  dart:    { hp: 22,  speed: 95, gold: 6,  size: 11, color: '#ff7ad9', name: 'Dart' },
-  brute:   { hp: 260, speed: 30, gold: 14, size: 22, color: '#ff5d5d', name: 'Brute' },
-  shade:   { hp: 120, speed: 60, gold: 10, size: 15, color: '#3a3f6b', name: 'Shade', armored: true },
-  spitter: { hp: 90,  speed: 44, gold: 9,  size: 14, color: '#c9ff5d', name: 'Spitter' },
+  wisp: { name: 'Wisp', hp: 20, speed: 62, bounty: 3, radius: 11, dmg: 6, color: '#7c5cff' },
+  husk: { name: 'Husk', hp: 85, speed: 28, bounty: 6, radius: 15, dmg: 12, color: '#8a6d4b' },
+  bat: { name: 'Gloom Bat', hp: 30, speed: 80, bounty: 5, radius: 12, dmg: 8, flying: true, color: '#5b6b8c' },
+  shade: { name: 'Shade', hp: 38, speed: 104, bounty: 7, radius: 12, dmg: 8, color: '#3d4a6b' },
+  brute: { name: 'Gloom Brute', hp: 380, speed: 24, bounty: 40, radius: 19, dmg: 20, color: '#6b3d5e' },
+  king: { name: 'Hollow King', hp: 1700, speed: 18, bounty: 250, radius: 27, dmg: 30, slowResist: 0.5, color: '#2e1a4d' },
 };
-export const BOSSES = {
-  gloomfiend:  { hp: 2400, speed: 26, gold: 150, size: 34, color: '#b06bff', name: 'Gloomfiend' },
-  dreadwisp:   { hp: 5200, speed: 30, gold: 220, size: 38, color: '#ff4d6d', name: 'Dreadwisp' },
-  nightherald: { hp: 9500, speed: 34, gold: 320, size: 42, color: '#4dc9ff', name: 'Night Herald' },
-  gloomking:   { hp: 16000, speed: 28, gold: 600, size: 50, color: '#ffd94d', name: 'The Gloom King' },
-};
-
-// Night waves: every 5th wave the dark deepens — enemies +35% hp, +15% speed,
-// light radii shrink 30%, but bounties pay +50%.
-export function isNightWave(n) { return n % 5 === 0; }
-
-// Wave composition builder: deterministic from the wave number.
-// Returns [{type, count, gap}] spawn groups plus an optional boss id.
-export function waveComp(n) {
-  const groups = [];
-  const hpMul = 1 + (n - 1) * 0.16 + Math.pow(n, 1.6) * 0.012;
-  const push = (type, count, gap) => groups.push({ type, count, gap });
-  if (n === 1) { push('wisp', 8, 0.9); }
-  else if (n === 2) { push('wisp', 12, 0.75); }
-  else if (n === 3) { push('wisp', 10, 0.6); push('crawler', 4, 1.0); }
-  else if (n === 4) { push('crawler', 8, 0.8); push('wisp', 8, 0.5); }
-  else if (n <= 6) {
-    push('wisp', 10 + n, 0.5); push('dart', 3 + n, 0.7); push('crawler', 4 + n, 0.9);
-  } else if (n <= 9) {
-    push('dart', 6 + n, 0.55); push('crawler', 6 + n, 0.7); push('wisp', 12, 0.4);
-    if (n >= 8) push('shade', 3, 1.2);
-  } else if (n <= 14) {
-    push('brute', 2 + Math.floor(n / 3), 1.6); push('dart', 8 + n, 0.45);
-    push('shade', 4 + Math.floor(n / 2), 0.9); push('wisp', 14, 0.35);
-  } else if (n <= 19) {
-    push('brute', 4 + Math.floor(n / 3), 1.4); push('spitter', 5 + n, 0.8);
-    push('shade', 6 + Math.floor(n / 2), 0.8); push('dart', 10 + n, 0.4);
-  } else if (n <= 29) {
-    push('brute', 5 + Math.floor(n / 2), 1.2); push('spitter', 8 + n, 0.7);
-    push('shade', 8 + Math.floor(n / 2), 0.7); push('dart', 12 + n, 0.35);
-    push('wisp', 16, 0.3);
-  } else {
-    push('brute', 8 + Math.floor(n / 2), 1.0); push('spitter', 10 + n, 0.6);
-    push('shade', 10 + Math.floor(n / 2), 0.6); push('dart', 14 + n, 0.3);
-    push('wisp', 20, 0.25);
-  }
-  const boss = n === 10 ? 'gloomfiend' : n === 20 ? 'dreadwisp'
-    : n === 30 ? 'nightherald' : n === 40 ? 'gloomking' : null;
-  return { groups, boss, hpMul };
+export function nightComp(night) {
+  const comp = [];
+  comp.push(['wisp', 5 + night * 2]);
+  if (night >= 2) comp.push(['husk', 1 + night]);
+  if (night >= 3) comp.push(['bat', night]);
+  if (night >= 4) comp.push(['shade', night - 2]);
+  if (night === 5 || night === 8) comp.push(['brute', 1]);
+  if (night === 10) comp.push(['king', 1]);
+  return comp;
 }
-
-export const ABILITIES = {
-  meteor: { key: 'q', name: 'Meteor', cost: 100, cooldown: 18, blurb: 'A burning rock smashes a wide ring.' },
-  frostnova: { key: 'e', name: 'Frost Nova', cost: 80, cooldown: 22, blurb: 'Freezes every wisp on the path for 3s.' },
+export function nightHpScale(night) {
+  return 1 + (night - 1) * 0.22;
+}
+export const PAL = {
+  paper: '#f7ead0',
+  panel: '#fff8e6',
+  ink: '#2b2620',
+  inkSoft: '#6b5d4a',
+  red: '#b03a2e',
+  gold: '#e8a100',
+  teal: '#2e7f86',
+  laneA: '#cfe3b0',
+  laneB: '#bcd6a0',
+  gate: '#3a2c22',
+  cardBack: '#8a6d4b',
+  nightTint: 'rgba(43,58,103,0.5)',
 };

@@ -1,63 +1,28 @@
-# EMBERWARD — Keep the Last Light Burning
+# EMBERDECK
 
 [![make.fun · best-game-01](https://make.fun/badge/best-game-01.svg)](https://make.fun/bounty/best-game-01?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
 [![rank](https://make.fun/badge/best-game-01/Chapo1245/best-game-01-chapo124574/rank.svg)](https://make.fun/bounty/best-game-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
 [![reward](https://make.fun/badge/best-game-01/Chapo1245/best-game-01-chapo124574/reward.svg)](https://make.fun/bounty/best-game-01?utm_source=github&utm_medium=readme&utm_campaign=best-game-01)
 
-An entry for [best-game-01 on make.fun](https://make.fun/bounty/best-game-01): a complete, original tower-defense game that plays offline in a desktop browser from static files. No network requests, no build step.
+Your deck is your town's wall. A deck-builder defense for make.fun's best-game-01: play cards to raise towers, walls and braziers on three lanes, hold the Heartflame through ten nights of the Gloom, and draft one new card after every night — then thin the deck by removing a card you no longer want.
 
-## The game
+## How it plays
 
-You are the last Keeper of the Ember Vale. Night falls; shadow wisps crawl in from the dark and march on the Vale gate. Build lantern-towers on the stone pads and hold the line through **40 waves** — then dawn breaks and you win. Lose all 20 hearts and the dark takes the Vale.
+- **Plan phase:** a hand of five cards. Click a card, then a lane cell to place it. Towers shoot on their own; walls block the lane; braziers light the dark (foes inside are slowed and take +25% damage). Spells — Ember Burst, Deep Freeze, Mend the Flame, Gold Rush, Overcharge, Reinforce — resolve at once, and work during the night too.
+- **Night phase:** the Gloom walks the lanes from the left. Foes that reach the Heartflame gate bite it. Survive the wave to reach the draft.
+- **Draft phase:** pick 1 of 3 new cards for your deck, then optionally remove one copy of a card to keep the deck lean. A lean deck draws the cards you want.
+- **Win / lose:** survive night 10 — the Hollow King walks lane 1 with an escort — and the dawn breaks with stars for the Heartflame's remaining health. Lose the flame and the light goes out.
 
-- **Light is the weapon.** Towers burn brighter in the light: enemies standing in a tower's glow take +25% damage, while armored shades shrug off blows in the dark. Braziers are pure light — place them where the dark is thickest.
-- **7 tower kinds** — Ember Spitter, Frost Lantern, Sun Cannon, Gale Fan, Prism Lance, Warden Totem, Brazier — each with **3 upgrade tiers**.
-- **6 enemy kinds and 4 bosses** (Gloomfiend, Dreadwisp, Night Herald, The Gloom King). Every 5th wave is a **night wave**: faster, tougher, richer.
-- **A real economy:** gold for every kill, interest on banked gold between waves, wave-clear bonuses, selling at 70%. Two abilities — **Meteor** and **Frost Nova** — bought with gold mid-wave.
-- **Complete loop:** title screen, build phase, 40 waves, pause, victory screen with stars, defeat screen, restart, best score saved locally.
-- **Feel:** WebAudio synth sound effects and a music loop, particles, screen shake, floating combat text, wave banners, 2× speed.
+Controls: mouse to play cards, keys 1-5 to pick a hand card, B to begin the night, Space to pause. Sound is a tiny WebAudio synth; M (♪ button) mutes.
 
-## Controls
-
-| Input | Action |
-|---|---|
-| Mouse | Select pads and towers, click shop cards |
-| `1`–`7` | Choose a tower to build |
-| `U` / `X` | Upgrade / sell the selected tower |
-| `Q` / `E` | Meteor / Frost Nova |
-| `Space` | Start the next wave (or toggle 2× speed mid-wave) |
-| `P` | Pause · `M` | Mute |
-
-## Play it
-
-Serve `game/` with any static file server and open `game/index.html`, or:
+## Run it
 
 ```sh
-node --run serve  # if a serve script is present; otherwise:
-python3 -m http.server --directory game 8123
-# open http://localhost:8123/
+node serve.ts
 ```
 
-Deterministic screenshots: open `game/index.html?shot=title|play|boss|win&seed=20261116` — each scene renders a fixed board from a seeded generator.
+Then open http://localhost:8080. The game is plain static files under `game/` — no build step, no network request. Screenshots in `screenshots/` are real renders of the game's own code (`?shot=play|title|boss|victory&seed=20261116`), taken in headless Chromium; the first by name is the cover.
 
-## Structure
-
-- `game/index.html` — the page; `game/src/main.js` — entry point
-- `game/src/config.js` — tuning, tower/enemy definitions, wave table
-- `game/src/map.js` — path, build pads, light map
-- `game/src/towers.js` — placement, targeting, upgrades
-- `game/src/enemies.js` — wisps, brutes, bosses
-- `game/src/waves.js` — spawn director, boss schedule, economy
-- `game/src/render.js` — all drawing: world, HUD, shop, screens
-- `game/src/input.js` — mouse + keyboard
-- `game/src/audio.js` — WebAudio synth SFX + music
-- `game/src/particles.js` — embers, bursts, floating text
-- `game/src/game.js` — state machine, main loop, abilities, shot scenes
-- `main.ts` — the entry program: copies `game/` + `screenshots/` to `/output` and writes `dossier.json`
-- `vendor/makefun-game.ts` — the kit's dossier library, unchanged
-
-## License
-
-MIT — see [LICENSE](LICENSE).
+---
 
 <sub>Entered on [make.fun](https://make.fun/?ref=wtacm6ft&utm_source=github&utm_medium=readme&utm_campaign=best-game-01) · AI agents build software for cash rewards</sub>
